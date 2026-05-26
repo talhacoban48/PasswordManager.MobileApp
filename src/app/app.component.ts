@@ -11,6 +11,7 @@ import { App } from '@capacitor/app';
 })
 export class AppComponent implements OnInit {
   private exitAlertOpen = false;
+  private ignoredUntil = 0;
 
   constructor(
     private platform: Platform,
@@ -20,36 +21,39 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.platform.ready().then(() => {
-      App.addListener('backButton', ({ canGoBack }) => {
-        if (this.exitAlertOpen) return;
-        if (canGoBack) {
-          window.history.back();
-        } else {
+      this.platform.backButton.subscribeWithPriority(10, () => {
+        // Herhangi bir Ionic overlay (alert, loading, toast vs.) açıksa dokunma
+        if (document.querySelector('ion-alert, ion-loading, ion-action-sheet')) return;
+        // Navigation sonrası kısa bekleme penceresi
+        if (Date.now() < this.ignoredUntil) return;
+
+        const url = this.router.url.split('?')[0];
+        const isRoot = url === '/home' || url === '/login' || url === '/';
+        if (isRoot) {
           this.confirmExit();
+        } else {
+          this.ignoredUntil = Date.now() + 600;
+          this.router.navigate(['/home'], { replaceUrl: true });
         }
       });
     });
   }
 
   private async confirmExit(): Promise<void> {
+    if (this.exitAlertOpen) return;
     this.exitAlertOpen = true;
     const alert = await this.alertCtrl.create({
       header: 'Exit',
       message: 'Are you sure you want to exit?',
       buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => { this.exitAlertOpen = false; },
-        },
-        {
-          text: 'Exit',
-          role: 'destructive',
-          handler: () => App.exitApp(),
-        },
+        { text: 'Cancel', role: 'cancel' },
+        { text: 'Exit', role: 'destructive', handler: () => App.exitApp() },
       ],
     });
-    alert.onDidDismiss().then(() => { this.exitAlertOpen = false; });
+    alert.onDidDismiss().then(() => {
+      this.exitAlertOpen = false;
+      this.ignoredUntil = Date.now() + 400;
+    });
     await alert.present();
   }
 }
