@@ -1,0 +1,138 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" fill="clear" color="medium">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+    @if (!isNew) {
+      <ion-buttons slot="end">
+        <ion-button (click)="deleteEntry()" fill="clear" color="danger">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="none" class="form-list">
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Entry Details</ion-label>
+      </ion-item-divider>
+
+      <ion-item class="field-item">
+        <ion-label position="stacked">App Name *</ion-label>
+        <ion-input
+          [(ngModel)]="appname"
+          placeholder="e.g. GitHub"
+          [readonly]="!isNew"
+          [class.readonly-field]="!isNew"
+        ></ion-input>
+        <ion-button slot="end" fill="clear" (click)="copy(appname)" class="copy-btn">
+          <ion-icon name="copy-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item class="field-item">
+        <ion-label position="stacked">User Name</ion-label>
+        <ion-input [(ngModel)]="username" placeholder="Username"></ion-input>
+        <ion-button slot="end" fill="clear" (click)="copy(username)" class="copy-btn">
+          <ion-icon name="copy-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item class="field-item">
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input [(ngModel)]="email" type="email" placeholder="email@example.com"></ion-input>
+        <ion-button slot="end" fill="clear" (click)="copy(email)" class="copy-btn">
+          <ion-icon name="copy-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item class="field-item">
+        <ion-label position="stacked">Password *</ion-label>
+        <ion-input
+          [(ngModel)]="password"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+        ></ion-input>
+        <ion-button slot="end" fill="clear" (click)="showPassword = !showPassword" class="copy-btn">
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" fill="clear" (click)="copy(password)" class="copy-btn">
+          <ion-icon name="copy-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item class="field-item textarea-item">
+        <ion-label position="stacked">Extra Information</ion-label>
+        <ion-textarea [(ngModel)]="url" placeholder="URL, notes…" rows="3" auto-grow="true"></ion-textarea>
+        <ion-button slot="end" fill="clear" (click)="copy(url)" class="copy-btn">
+          <ion-icon name="copy-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item class="field-item">
+        <ion-label>Active</ion-label>
+        <ion-toggle [(ngModel)]="isActive" slot="end"></ion-toggle>
+      </ion-item>
+    </ion-item-group>
+
+    @if (!isNew) {
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>Timestamps</ion-label>
+        </ion-item-divider>
+        <ion-item class="date-item">
+          <ion-label>Created</ion-label>
+          <ion-note slot="end">{{ formatDate(createdDate) }}</ion-note>
+        </ion-item>
+        <ion-item class="date-item">
+          <ion-label>Updated</ion-label>
+          <ion-note slot="end">{{ formatDate(updatedDate) }}</ion-note>
+        </ion-item>
+      </ion-item-group>
+    }
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Password Generator</ion-label>
+      </ion-item-divider>
+
+      <div class="generator-section">
+        <ion-button expand="block" fill="outline" (click)="generatePassword()" class="generate-btn">
+          <ion-icon name="shuffle-outline" slot="start"></ion-icon>
+          Generate Password
+        </ion-button>
+
+        @if (generatedPassword) {
+          <ion-item class="generated-item">
+            <ion-label>{{ generatedPassword }}</ion-label>
+            <ion-button slot="end" fill="clear" (click)="copy(generatedPassword)" class="copy-btn">
+              <ion-icon name="copy-outline"></ion-icon>
+            </ion-button>
+            <ion-button slot="end" fill="clear" color="success" (click)="useGenerated()">
+              <ion-icon name="checkmark-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        }
+      </div>
+    </ion-item-group>
+
+  </ion-list>
+
+  <div class="action-buttons">
+    <ion-button expand="block" (click)="save()" class="save-btn">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      {{ isNew ? 'Insert' : 'Update' }}
+    </ion-button>
+    <ion-button expand="block" fill="outline" color="medium" (click)="clearForm()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Clear
+    </ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "PasswordManager.MobileApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,45 @@
+<ion-content class="login-content" [fullscreen]="true">
+  <div class="login-container">
+    <div class="login-header">
+      <ion-icon name="shield-checkmark-outline" class="login-icon"></ion-icon>
+      <h1>Password Manager</h1>
+      <h2>{{ title }}</h2>
+      <p class="subtitle">{{ subtitle }}</p>
+    </div>
+
+    <div class="login-form">
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-input
+          [(ngModel)]="masterPassword"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Master Password"
+          (keyup.enter)="submit()"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="input-item" *ngIf="isSetup">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-input
+          [(ngModel)]="confirmPassword"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Confirm Password"
+          (keyup.enter)="submit()"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="toggle-item">
+        <ion-checkbox [(ngModel)]="showPassword" slot="start"></ion-checkbox>
+        <ion-label>Show password</ion-label>
+      </ion-item>
+
+      <ion-button expand="block" (click)="submit()" class="submit-btn">
+        {{ isSetup ? 'Create' : 'Login' }}
+      </ion-button>
+
+      <p class="warning-text" *ngIf="isSetup">
+        ⚠ Keep this password safe. There is no recovery option.
+      </p>
+    </div>
+  </div>
+</ion-content>
